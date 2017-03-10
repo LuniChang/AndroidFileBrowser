@@ -11,4 +11,8 @@ public class FileConfig {
      *   sample: .mp4|.mp3   or .mp4
      */
     public final static String KEY_FILE_FILTER_NAME="KEY_FILE_FILTER_NAME";
+
+
+    public final static String KEY_SELECTED_FILES="KEY_SELECTED_FILES";
+
 }

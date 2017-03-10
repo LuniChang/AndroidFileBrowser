@@ -2,12 +2,13 @@ package com.ling.filebrowser;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -29,7 +30,9 @@ public class FileMainActivity extends Activity {
 	private MedioAdapter medioAdapter;
 	private Stack<File> historyFileStack=new Stack<File>();
 	private TextView textTitle;
-	private Button lastFilebutton;
+	private Button lastFileButton;
+
+	private Button confirmButton;
 
 	private FileFilter fileFilter;
 	private String fileFilteName;
@@ -49,7 +52,9 @@ public class FileMainActivity extends Activity {
 	private void initView() {
 		gridViewContent=(GridView) findViewById(R.id.gridView_content);
 		textTitle= (TextView) findViewById(R.id.textView_title);
-		lastFilebutton=(Button) findViewById(R.id.button_back);
+		lastFileButton =(Button) findViewById(R.id.button_back);
+		confirmButton =(Button) findViewById(R.id.button_ok);
+
 	}
 
 
@@ -105,13 +110,21 @@ public class FileMainActivity extends Activity {
 			
 		});
 		
-		lastFilebutton.setOnClickListener(new OnClickListener() {
+		lastFileButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				backLastPath();
 			}
 		});
+		confirmButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				callbackHadSeletedFiles();
+			}
+		});
+
 	}
 
 	protected void backLastPath() {
@@ -178,7 +191,48 @@ public class FileMainActivity extends Activity {
 		return file;
 		
 	}
-	
+
+
+
+
+	private void callbackHadSeletedFiles(){
+		Intent intent=new Intent();
+
+		intent.putExtra(FileConfig.KEY_SELECTED_FILES,getSelectedPathArray(medioAdapter.getList()));
+
+		setResult(RESULT_OK,intent);
+		finish();
+	}
+
+
+	private String[] getSelectedPathArray(List<FileData> srcList){
+		if(srcList==null||srcList.size()==0){
+			return null;
+		}
+
+
+
+		List<String> hadSelectList=new ArrayList<String>();
+		for (FileData item:srcList){
+			if(item.isSelected){
+				hadSelectList.add(item.getFileContent().getPath());
+			}
+		}
+
+		if(hadSelectList.size()==0){
+			return null;
+		}
+
+		String[] pathArray=new String[hadSelectList.size()];
+
+		for(int i=0;i<hadSelectList.size();++i){
+			pathArray[i]=hadSelectList.get(i);
+		}
+
+		return pathArray;
+	}
+
+
 //	@Override
 //	public boolean onCreateOptionsMenu(Menu menu) {
 //		// Inflate the menu; this adds items to the action bar if it is present.
