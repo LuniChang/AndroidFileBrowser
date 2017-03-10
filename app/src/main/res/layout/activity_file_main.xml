@@ -1,0 +1,75 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ling.filebrowser.FileMainActivity" >
+
+    <RelativeLayout
+        android:id="@+id/layout_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF808080"
+        android:padding="8dp" 
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="@string/back"
+            android:textColor="#FFFFFFFF" />
+
+        <TextView
+            android:id="@+id/textView_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/hello_world"
+            android:textColor="#FFFFFFFF" />
+    </RelativeLayout>
+
+    <LinearLayout
+         android:id="@+id/layout_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" 
+        android:layout_below="@+id/layout_title"
+         android:layout_above="@+id/layout_menu"
+         android:padding="8px">
+
+        <GridView
+              android:id="@+id/gridView_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+        </GridView>
+
+        
+    </LinearLayout>
+    <LinearLayout
+          android:id="@+id/layout_menu"
+        android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:textColor="#FFFFFFFF"
+            >
+
+            <Button
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:id="@+id/button_back"
+                android:text="上一层"/>
+
+            <Button
+                  android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/button_ok" 
+                android:text="选择"/>
+        </LinearLayout>
+
+</RelativeLayout>
