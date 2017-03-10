@@ -145,7 +145,7 @@ public class FileMainActivity extends Activity {
 	}
 
 	private void updateFileShowList(File file) {
-		//TODO 应该异步操作优化
+		//TODO should be asyn
 		if(fileFilter!=null){
             medioAdapter.setList(FileData.fileArrayToFileDataList(file.listFiles()));
         }else {
