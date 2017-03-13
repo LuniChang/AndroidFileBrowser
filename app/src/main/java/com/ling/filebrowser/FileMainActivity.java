@@ -101,7 +101,7 @@ public class FileMainActivity extends AbstractFileActivity {
 	}
 
 	private void onClickItem(int position) {
-		if(position<0&&position>medioAdapter.getList().size()){
+		if((position<0&&position>=medioAdapter.getList().size())||medioAdapter.getList().size()==0){
             return;
         }
 

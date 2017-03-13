@@ -25,7 +25,7 @@ public class MedioAdapter extends BaseAdapterFactory<FileData>{
 
 
 	private FileBitmapPreviewer fileBitmapPreviewer;
-	private int itemHeight=60;
+	private int itemHeight=LinearLayout.LayoutParams.WRAP_CONTENT;
 
 	public int getItemHeight() {
 		return itemHeight;
