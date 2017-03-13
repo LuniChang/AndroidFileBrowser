@@ -1,12 +1,9 @@
 package com.ling.filebrowser;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -19,27 +16,19 @@ import android.widget.TextView;
 
 import com.ling.filebrowser.config.FileConfig;
 import com.ling.filebrowser.model.FileData;
-import com.ling.filebrowser.util.Util;
 
-public class FileMainActivity extends Activity {
+public class FileMainActivity extends AbstractFileActivity {
 
 	
 	private GridView gridViewContent;
-	private FileData fileList;
 
 	private MedioAdapter medioAdapter;
-	private Stack<File> historyFileStack=new Stack<File>();
 	private TextView textTitle;
 	private Button lastFileButton;
 
 	private Button confirmButton;
 
-	private FileFilter fileFilter;
-	private String fileFilteName;
 
-
-	private String rootPath=Util.getSDcardPath();
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,41 +50,18 @@ public class FileMainActivity extends Activity {
 
 	private void setData(Bundle savedInstanceState) {
 
-		fileFilteName=savedInstanceState.getString(FileConfig.KEY_FILE_FILTER_NAME,null);
-		if(fileFilteName!=null){
-			fileFilter=new FileFilter() {
-				@Override
-				public boolean accept(File pathname) {
-
-					if(pathname.isDirectory())
-						return true;
+		initFileFiler(savedInstanceState);
 
 
-					    String[] filerNames=fileFilteName.split("|");
-
-					if(filerNames!=null){
-						String name = pathname.getName();
-						for (String filerName:filerNames){
-							if(!name.endsWith(filerName))
-								return false;
-						}
-					}
-					return true;
-				}
-			};
-		}
-
-
-		rootPath=savedInstanceState.getString(FileConfig.KEY_ROOT_PATH,Util.getSDcardPath());
+		initRootPath(savedInstanceState);
 
 		gridViewContent.setColumnWidth(getColumnWidth());
 		gridViewContent.setNumColumns(3);
 		gridViewContent.setHorizontalSpacing(8);
 		gridViewContent.setVerticalSpacing(8);
 
-		File sdcardPath=new File(rootPath);
-		pushFile(sdcardPath.getParentFile());
-		medioAdapter=new MedioAdapter(this, FileData.fileArrayToFileDataList(sdcardPath.getParentFile().listFiles()));
+
+		medioAdapter=new MedioAdapter(this, FileData.fileArrayToFileDataList(getRootFile().listFiles()));
 		medioAdapter.setItemHeight(getColumnWidth());
 		gridViewContent.setAdapter(medioAdapter);
 		gridViewContent.setOnItemClickListener(new OnItemClickListener() {
@@ -114,22 +80,23 @@ public class FileMainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				backLastPath();
+				returnLastPath();
 			}
 		});
 		confirmButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				callbackHadSeletedFiles();
+				callbackHadSeletedFiles(medioAdapter.getList());
 			}
 		});
 
 	}
 
-	protected void backLastPath() {
-		File popFile=popFile();
-		updateFileShowList(popFile);
+	protected void returnLastPath() {
+		File lastFile=popFile();
+		textTitle.setText(lastFile.getName());
+		updateFileShowList(lastFile);
 		medioAdapter.notifyDataSetChanged();
 	}
 
@@ -142,9 +109,8 @@ public class FileMainActivity extends Activity {
 
 		if(fileDataItem.getFileContent().isDirectory()){
             pushFile(fileDataItem.getFileContent());
-
+			textTitle.setText(fileDataItem.getFileContent().getName());
             updateFileShowList(fileDataItem.getFileContent());
-
             gridViewContent.scrollTo(0,0);
             medioAdapter.notifyDataSetInvalidated();
 
@@ -172,65 +138,11 @@ public class FileMainActivity extends Activity {
 		return columnWidth;
 	}
 	
-//	private boolean isImgType(String fileType){
-//		return "jpg".equals(fileType)||"png".equals(fileType)||"3gp".equals(fileType);
-//	}
-	
-	private void pushFile(File file){
-		textTitle.setText(file.getName());
-		historyFileStack.push(file);
-	}
-	
-	private File popFile(){
-		File sdcardPath=new File(rootPath);
-		File file=sdcardPath.getParentFile(); 
-		if(!historyFileStack.isEmpty()){
-			 file=historyFileStack.pop().getParentFile();
-		}
-		textTitle.setText(file.getName());
-		return file;
-		
-	}
 
 
 
 
-	private void callbackHadSeletedFiles(){
-		Intent intent=new Intent();
 
-		intent.putExtra(FileConfig.KEY_SELECTED_FILES,getSelectedPathArray(medioAdapter.getList()));
-
-		setResult(RESULT_OK,intent);
-		finish();
-	}
-
-
-	private String[] getSelectedPathArray(List<FileData> srcList){
-		if(srcList==null||srcList.size()==0){
-			return null;
-		}
-
-
-
-		List<String> hadSelectList=new ArrayList<String>();
-		for (FileData item:srcList){
-			if(item.isSelected){
-				hadSelectList.add(item.getFileContent().getPath());
-			}
-		}
-
-		if(hadSelectList.size()==0){
-			return null;
-		}
-
-		String[] pathArray=new String[hadSelectList.size()];
-
-		for(int i=0;i<hadSelectList.size();++i){
-			pathArray[i]=hadSelectList.get(i);
-		}
-
-		return pathArray;
-	}
 
 
 //	@Override
