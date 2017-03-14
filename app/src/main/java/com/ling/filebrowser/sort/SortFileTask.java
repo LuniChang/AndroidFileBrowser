@@ -142,7 +142,10 @@ public  class SortFileTask extends AbstractSortFileTask {
     public void stop() {
         isRun=false;
         if(sortThread.getState()== Thread.State.WAITING){
-            sortThread.notify();
+            synchronized (sortThread){
+                sortThread.notify();
+            }
+
         }
         sortThread=null;
     }
