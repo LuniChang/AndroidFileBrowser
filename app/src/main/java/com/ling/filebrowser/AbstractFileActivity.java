@@ -42,6 +42,9 @@ public class AbstractFileActivity extends Activity {
                     if(filerNames!=null){
                         String name = pathname.getName();
                         for (String filerName:filerNames){
+                            if("*".equals(filerName)){
+                                return true;
+                            }
                             if(!name.endsWith(filerName))
                                 return false;
                         }
@@ -123,4 +126,5 @@ public class AbstractFileActivity extends Activity {
 
         return pathArray;
     }
+
 }

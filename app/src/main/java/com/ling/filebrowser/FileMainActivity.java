@@ -1,10 +1,5 @@
 package com.ling.filebrowser;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,21 +8,36 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.ling.filebrowser.config.FileConfig;
+import com.brt.log.AppLog;
 import com.ling.filebrowser.model.FileData;
+import com.ling.filebrowser.sort.AbstractSortFileTask;
+import com.ling.filebrowser.sort.SortFileTask;
+import com.ling.filebrowser.util.Util;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileMainActivity extends AbstractFileActivity {
+	private AppLog appLog = new AppLog(1, FileMainActivity.class.getName());
 
 	
 	private GridView gridViewContent;
 
 	private MedioAdapter medioAdapter;
 	private TextView textTitle;
+
+
+	private TextView textBack;
+	private TextView textSelect;
 	private Button lastFileButton;
 
 	private Button confirmButton;
 
+
+	private boolean isShowCheckBox=false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +53,8 @@ public class FileMainActivity extends AbstractFileActivity {
 		textTitle= (TextView) findViewById(R.id.textView_title);
 		lastFileButton =(Button) findViewById(R.id.button_back);
 		confirmButton =(Button) findViewById(R.id.button_ok);
-
+		textBack=(TextView) findViewById(R.id.textView_back);
+		textSelect=(TextView) findViewById(R.id.textView_more);
 	}
 
 
@@ -61,7 +72,8 @@ public class FileMainActivity extends AbstractFileActivity {
 		gridViewContent.setVerticalSpacing(8);
 
 
-		medioAdapter=new MedioAdapter(this, FileData.fileArrayToFileDataList(getRootFile().listFiles()));
+		medioAdapter=new MedioAdapter(this, new ArrayList<FileData>());
+
 		medioAdapter.setItemHeight(getColumnWidth());
 		gridViewContent.setAdapter(medioAdapter);
 		gridViewContent.setOnItemClickListener(new OnItemClickListener() {
@@ -90,14 +102,35 @@ public class FileMainActivity extends AbstractFileActivity {
 				callbackHadSeletedFiles(medioAdapter.getList());
 			}
 		});
+		textBack.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+				returnLastPath();
+			}
+		});
+		textSelect.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				isShowCheckBox=isShowCheckBox?false:true;
+				medioAdapter.setShowCheckBox(isShowCheckBox);
+				if(isShowCheckBox){
+					textSelect.setText(R.string.cancel);
+				}else {
+					textSelect.setText(R.string.select);
+				}
+			}
+		});
+
+		updateFileShowList(getRootFile());
 	}
 
 	protected void returnLastPath() {
 		File lastFile=popFile();
 		textTitle.setText(lastFile.getName());
 		updateFileShowList(lastFile);
-		medioAdapter.notifyDataSetChanged();
+
 	}
 
 	private void onClickItem(int position) {
@@ -106,6 +139,12 @@ public class FileMainActivity extends AbstractFileActivity {
         }
 
 		FileData fileDataItem=medioAdapter.getList().get(position);
+
+		if(isShowCheckBox){
+			fileDataItem.isSelected=fileDataItem.isSelected?false:true;
+			medioAdapter.notifyDataSetChanged();
+			return;
+		}
 
 		if(fileDataItem.getFileContent().isDirectory()){
             pushFile(fileDataItem.getFileContent());
@@ -117,19 +156,39 @@ public class FileMainActivity extends AbstractFileActivity {
             return;
         }
 
-		medioAdapter.getList().get(position).isSelected=
-                    medioAdapter.getList().get(position).isSelected?false:true;
+		try{
+			Util.openFile(medioAdapter.getList().get(position).getFileContent(),FileMainActivity.this);
+		}catch (Exception e){
+			appLog.e(e.toString());
+			Toast.makeText(FileMainActivity.this,"未安装相关应用",Toast.LENGTH_LONG).show();
+		}
 
 		medioAdapter.notifyDataSetChanged();
 	}
 
-	private void updateFileShowList(File file) {
-		//TODO should be asyn
-		if(fileFilter!=null){
-            medioAdapter.setList(FileData.fileArrayToFileDataList(file.listFiles()));
-        }else {
-            medioAdapter.setList(FileData.fileArrayToFileDataList(file.listFiles(fileFilter)));
-        }
+	private SortFileTask sortFileTask;
+
+	private void updateFileShowList(final File file) {
+//		should be asyn and sort
+//		if(fileFilter!=null){
+//            medioAdapter.setList(FileData.fileArrayToFileDataList(file.listFiles()));
+//
+//        }else {
+//            medioAdapter.setList(FileData.fileArrayToFileDataList(file.listFiles(fileFilter)));
+//
+//        }
+
+		if(sortFileTask==null){
+			sortFileTask=new SortFileTask();
+			sortFileTask.setOnGetSortedFilesListener(new AbstractSortFileTask.OnGetSortedFilesListener() {
+				@Override
+				public void onGetResult(List<FileData> result) {
+					medioAdapter.setList(result);
+				}
+			});
+		}
+		sortFileTask.sort(file,fileFilter);
+
 	}
 
 	private int getColumnWidth(){
@@ -137,12 +196,14 @@ public class FileMainActivity extends AbstractFileActivity {
 		int columnWidth=(w-24)/3;
 		return columnWidth;
 	}
-	
 
-
-
-
-
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if(sortFileTask!=null){
+			sortFileTask.stop();
+		}
+	}
 
 
 //	@Override

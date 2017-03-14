@@ -71,5 +71,6 @@ public abstract class BaseAdapterFactory<T> extends BaseAdapter {
 
     public void setList(List<T> list) {
         this.list = list;
+		this.notifyDataSetInvalidated();
     }
 }

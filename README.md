@@ -1,2 +1,2 @@
 # AndroidFileBrowser
-A simple Android File(image、vedio can pre) browser 
+A simple Android File(image、vedio can com.ling.filebrowser.pre) browser

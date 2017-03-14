@@ -1,10 +1,13 @@
 package com.ling.filebrowser.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileData {
+public class FileData implements Parcelable {
 	public boolean isSelected=false;
 	private File fileContent;
 
@@ -33,4 +36,43 @@ public class FileData {
 		return result;
 		
 	}
+
+
+	public FileData()
+	{
+
+	}
+
+	private FileData(Parcel in)
+	{
+
+		fileContent=(File) in.readSerializable();
+		isSelected=in.readByte()==1?true:false;
+	}
+
+	public int describeContents()
+	{
+		return 0;
+	}
+
+	public void writeToParcel(Parcel out, int flags)
+	{
+		out.writeSerializable(fileContent);
+		out.writeByte((byte) (isSelected?1:0));
+	}
+
+	public static final Parcelable.Creator<FileData> CREATOR = new Parcelable.Creator<FileData>()
+	{
+		public FileData createFromParcel(Parcel in)
+		{
+			return new FileData(in);
+		}
+
+		public FileData[] newArray(int size)
+		{
+			return new FileData[size];
+		}
+	};
+
+
 }

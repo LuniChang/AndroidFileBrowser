@@ -7,13 +7,14 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ling.filebrowser.model.FileData;
-import com.ling.filebrowser.util.FileBitmapPreviewer;
+import com.ling.filebrowser.pre.FileBitmapPreviewer;
+import com.ling.filebrowser.pre.model.PreviewerResult;
+
 import com.ling.filebrowser.config.LruCacheConfig;
 
 public class MedioAdapter extends BaseAdapterFactory<FileData>{
@@ -21,6 +22,9 @@ public class MedioAdapter extends BaseAdapterFactory<FileData>{
 
 
 
+
+
+	private boolean showCheckBox=false;
 
 
 
@@ -68,7 +72,6 @@ public class MedioAdapter extends BaseAdapterFactory<FileData>{
 
 
 		setData(viewHolder, fileData);
-
 		setViewCase(viewHolder, fileData);
 		
 		return convertView;
@@ -85,16 +88,18 @@ public class MedioAdapter extends BaseAdapterFactory<FileData>{
 
 
 		setData(viewHolder, item);
+		setViewCase(viewHolder, item);
+
 	}
 
 	protected void setViewCase(final ViewHolder viewHolder, final FileData item) {
-		viewHolder.checkbox_content.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				item.isSelected=isChecked;
-				MedioAdapter.this.notifyDataSetChanged();
-			}
-		});
+//		viewHolder.checkbox_content.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//			@Override
+//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//				item.isSelected=isChecked;
+//				MedioAdapter.this.notifyDataSetChanged();
+//			}
+//		});
 	}
 
 	protected void setData(ViewHolder viewHolder, FileData fileItem) {
@@ -112,13 +117,13 @@ public class MedioAdapter extends BaseAdapterFactory<FileData>{
 		}
 
 
-		if(fileItem.isSelected){
-			viewHolder.checkbox_content.setChecked(true);
-			viewHolder.checkbox_content.setVisibility(View.VISIBLE);
-		}else{
-			viewHolder.checkbox_content.setChecked(false);
-			viewHolder.checkbox_content.setVisibility(View.GONE);
-		}
+
+
+		viewHolder.checkbox_content.setVisibility(showCheckBox?View.VISIBLE:View.GONE);
+
+		viewHolder.checkbox_content.setChecked(fileItem.isSelected);
+
+
 
 		viewHolder.textview_content.setText(fileItem.getFileContent().getName());
 
@@ -130,7 +135,7 @@ public class MedioAdapter extends BaseAdapterFactory<FileData>{
 		if (this.fileBitmapPreviewer == null) {
 			this.fileBitmapPreviewer = new FileBitmapPreviewer(new FileBitmapPreviewer.OnGetPreviewerResultListener() {
 				@Override
-				public void onGetResult(FileBitmapPreviewer.PreviewerResult result) {
+				public void onGetResult(PreviewerResult result) {
 
 					if (result != null && result.file != null) {
 						LruCacheConfig.getInstance(context).put(result.file.getPath(), result.bitmap);
@@ -160,7 +165,14 @@ public class MedioAdapter extends BaseAdapterFactory<FileData>{
 
 		}
 	}
-	
-	
 
+
+	public boolean isShowCheckBox() {
+		return showCheckBox;
+	}
+
+	public void setShowCheckBox(boolean showCheckBox) {
+		this.showCheckBox = showCheckBox;
+		this.notifyDataSetChanged();
+	}
 }
