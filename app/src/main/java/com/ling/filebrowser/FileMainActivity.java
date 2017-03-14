@@ -127,8 +127,8 @@ public class FileMainActivity extends AbstractFileActivity {
 	}
 
 	protected void returnLastPath() {
-		File lastFile=popFile();
-		textTitle.setText(lastFile.getName());
+		FileData lastFile=popFile();
+		textTitle.setText(lastFile.getFileContent().getName());
 		updateFileShowList(lastFile);
 
 	}
@@ -147,9 +147,9 @@ public class FileMainActivity extends AbstractFileActivity {
 		}
 
 		if(fileDataItem.getFileContent().isDirectory()){
-            pushFile(fileDataItem.getFileContent());
+            pushFile(fileDataItem);
 			textTitle.setText(fileDataItem.getFileContent().getName());
-            updateFileShowList(fileDataItem.getFileContent());
+            updateFileShowList(fileDataItem);
             gridViewContent.scrollTo(0,0);
             medioAdapter.notifyDataSetInvalidated();
 
@@ -168,7 +168,7 @@ public class FileMainActivity extends AbstractFileActivity {
 
 	private SortFileTask sortFileTask;
 
-	private void updateFileShowList(final File file) {
+	private void updateFileShowList(final FileData file) {
 //		should be asyn and sort
 //		if(fileFilter!=null){
 //            medioAdapter.setList(FileData.fileArrayToFileDataList(file.listFiles()));

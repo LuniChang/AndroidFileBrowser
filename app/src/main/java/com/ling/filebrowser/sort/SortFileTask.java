@@ -18,7 +18,7 @@ import com.brt.log.AppLog;
 public  class SortFileTask extends AbstractSortFileTask {
 
     private AppLog appLog = new AppLog(1, SortFileTask.class.getName());
-    private File waitSortParent;
+    private FileData waitSortParent;
     private SortThread sortThread;
     private boolean isRun=true;
 
@@ -61,9 +61,9 @@ public  class SortFileTask extends AbstractSortFileTask {
 
                         List<FileData> src=null;
                         if(sortFileFilter!=null){
-                            src=FileData.fileArrayToFileDataList(waitSortParent.listFiles(sortFileFilter));
+                            src=FileData.fileArrayToFileDataList(waitSortParent.getFileContent().listFiles(sortFileFilter));
                         }else {
-                            src=FileData.fileArrayToFileDataList(waitSortParent.listFiles());
+                            src=FileData.fileArrayToFileDataList(waitSortParent.getFileContent().listFiles());
                         }
 
                         ArrayList<FileData> result=doSort(src);
@@ -105,7 +105,7 @@ public  class SortFileTask extends AbstractSortFileTask {
     private  FileFilter sortFileFilter;
 
     @Override
-    public void sort(File parentFile, FileFilter fileFilter){
+    public void sort(FileData parentFile, FileFilter fileFilter){
         this.waitSortParent= parentFile;
         this.sortFileFilter=fileFilter;
         isRun=true;
@@ -148,7 +148,7 @@ public  class SortFileTask extends AbstractSortFileTask {
     }
 
     @Override
-    public void sort(File parentFile) {
+    public void sort(FileData parentFile) {
         sort(parentFile,null);
     }
 }

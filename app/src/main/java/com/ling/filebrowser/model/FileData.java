@@ -75,4 +75,15 @@ public class FileData implements Parcelable {
 	};
 
 
+	public FileData getParentFile(){
+		FileData fileData=new FileData(this.getFileContent().getParentFile());
+		return fileData;
+	}
+
+	public FileData(File fileContent) {
+		this.fileContent = fileContent;
+	}
+	public FileData(String path) {
+		this.fileContent = new File(path);
+	}
 }

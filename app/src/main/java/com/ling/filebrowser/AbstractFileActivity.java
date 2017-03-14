@@ -18,10 +18,10 @@ import java.util.Stack;
  * Created by Administrator on 2017/3/13.
  */
 public class AbstractFileActivity extends Activity {
-    protected Stack<File> historyFileStack=new Stack<File>();
+    protected Stack<FileData> historyFileStack=new Stack<FileData>();
     protected FileFilter fileFilter;
     protected String fileFilteName;
-    private File rootFile = new File(Util.getSDcardPath());
+    private FileData rootFile = new FileData(Util.getSDcardPath());
 
     protected void initFileFiler(Bundle savedInstanceState) {
         if(savedInstanceState==null){
@@ -59,22 +59,22 @@ public class AbstractFileActivity extends Activity {
         String rootFilePath = null;
         if(savedInstanceState==null
                 ||(rootFilePath = savedInstanceState.getString(FileConfig.KEY_ROOT_PATH))==null){
-            rootFile=new File(Util.getSDcardPath());
+            rootFile=new FileData(Util.getSDcardPath());
             rootFile=rootFile.getParentFile();
             pushFile(rootFile);
             return;
         }
-        rootFile=new File(rootFilePath);
+        rootFile=new FileData(rootFilePath);
         pushFile(rootFile);
     }
 
 
-    protected void pushFile(File file){
+    protected void pushFile(FileData file){
         historyFileStack.push(file);
     }
 
-    protected File popFile(){
-        File file=rootFile;
+    protected FileData popFile(){
+        FileData file=new FileData(rootFile.getFileContent());
         if(!historyFileStack.isEmpty()){
             file=historyFileStack.pop().getParentFile();
         }
@@ -83,9 +83,9 @@ public class AbstractFileActivity extends Activity {
     }
 
 
-    protected File getRootFile(){
+    protected FileData getRootFile(){
         if(rootFile==null){
-            rootFile=new File(Util.getSDcardPath());
+            rootFile=new FileData(Util.getSDcardPath());
             rootFile=rootFile.getParentFile();
         }
         return rootFile;
