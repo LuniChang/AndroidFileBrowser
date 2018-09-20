@@ -13,19 +13,17 @@ import java.util.List;
 
 public class SortByName implements SortMethod {
 
-    private Comparator<FileData> comparator= new Comparator<FileData>() {
+    private Comparator<FileData> comparator = new Comparator<FileData>() {
         @Override
         public int compare(FileData lhs, FileData rhs) {
-             int lName=lhs.getFileContent().getName().toLowerCase().toCharArray()[0];
-            int rName=rhs.getFileContent().getName().toLowerCase().toCharArray()[0];
-            if(lName < rName )
-            {
+            int lName = lhs.getFileContent().getName().toLowerCase().toCharArray()[0];
+            int rName = rhs.getFileContent().getName().toLowerCase().toCharArray()[0];
+            if (lName < rName) {
                 return -1;
-            }else if (lName > rName){
+            } else if (lName > rName) {
 
                 return 1;
-            }else
-            {
+            } else {
                 return 0;
             }
         }

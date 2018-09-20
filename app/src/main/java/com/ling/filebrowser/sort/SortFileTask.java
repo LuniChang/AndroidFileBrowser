@@ -8,23 +8,21 @@ import com.ling.filebrowser.model.FileData;
 import com.ling.filebrowser.sort.method.SortByDir;
 import com.ling.filebrowser.sort.method.SortMethod;
 import com.ling.filebrowser.util.Util;
+import com.xu.Log.AppLog;
 
-import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
-import com.brt.log.AppLog;
 
-public  class SortFileTask extends AbstractSortFileTask {
+public class SortFileTask extends AbstractSortFileTask {
 
     private AppLog appLog = new AppLog(1, SortFileTask.class.getName());
     private FileData waitSortParent;
     private SortThread sortThread;
-    private boolean isRun=true;
+    private boolean isRun = true;
 
 
-
-    private SortHandler sortHandler=new SortHandler();
+    private SortHandler sortHandler = new SortHandler();
 
     private class SortHandler extends Handler {
         @Override
@@ -32,13 +30,12 @@ public  class SortFileTask extends AbstractSortFileTask {
 
             try {
                 Bundle bundle = msg.getData();
-                ArrayList<FileData> result =  bundle.getParcelableArrayList("list");
+                ArrayList<FileData> result = bundle.getParcelableArrayList("list");
 
 
-                if(onGetSortedFilesListener!=null){
+                if (onGetSortedFilesListener != null) {
                     onGetSortedFilesListener.onGetResult(result);
                 }
-
 
 
             } catch (Exception e) {
@@ -55,37 +52,37 @@ public  class SortFileTask extends AbstractSortFileTask {
         public void run() {
             try {
 
-                while (isRun){
+                while (isRun) {
 
-                    if (waitSortParent!=null){
+                    if (waitSortParent != null) {
 
-                        List<FileData> src=null;
-                        if(sortFileFilter!=null){
-                            src=FileData.fileArrayToFileDataList(waitSortParent.getFileContent().listFiles(sortFileFilter));
-                        }else {
-                            src=FileData.fileArrayToFileDataList(waitSortParent.getFileContent().listFiles());
+                        List<FileData> src = null;
+                        if (sortFileFilter != null) {
+                            src = FileData.fileArrayToFileDataList(waitSortParent.getFileContent().listFiles(sortFileFilter));
+                        } else {
+                            src = FileData.fileArrayToFileDataList(waitSortParent.getFileContent().listFiles());
                         }
 
-                        ArrayList<FileData> result=doSort(src);
+                        ArrayList<FileData> result = doSort(src);
                         noticHandler(result);
 
-                    }else {
+                    } else {
                         noticHandler(new ArrayList<FileData>());
                     }
 
 
-                    synchronized (sortThread){
+                    synchronized (sortThread) {
                         sortThread.wait();
                     }
 
                 }
 
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 noticHandler(new ArrayList<FileData>());
                 appLog.e(Util.getExceptionStackInfo(e));
-            }finally {
-                isRun=false;
+            } finally {
+                isRun = false;
             }
 
 
@@ -93,40 +90,39 @@ public  class SortFileTask extends AbstractSortFileTask {
     }
 
 
-    protected void noticHandler(ArrayList<FileData> src){
-        Message message=new Message();
-        Bundle data=new Bundle();
-        data.putParcelableArrayList("list",src);
+    protected void noticHandler(ArrayList<FileData> src) {
+        Message message = new Message();
+        Bundle data = new Bundle();
+        data.putParcelableArrayList("list", src);
         message.setData(data);
         message.setTarget(sortHandler);
         message.sendToTarget();
     }
 
-    private  FileFilter sortFileFilter;
+    private FileFilter sortFileFilter;
 
     @Override
-    public void sort(FileData parentFile, FileFilter fileFilter){
-        this.waitSortParent= parentFile;
-        this.sortFileFilter=fileFilter;
-        isRun=true;
-        if(sortThread==null){
-            sortThread=new SortFileTask.SortThread();
+    public void sort(FileData parentFile, FileFilter fileFilter) {
+        this.waitSortParent = parentFile;
+        this.sortFileFilter = fileFilter;
+        isRun = true;
+        if (sortThread == null) {
+            sortThread = new SortFileTask.SortThread();
             sortThread.start();
         }
-        if(sortThread.getState()== Thread.State.WAITING){
-            synchronized (sortThread){
+        if (sortThread.getState() == Thread.State.WAITING) {
+            synchronized (sortThread) {
                 sortThread.notify();
             }
         }
     }
 
 
+    private SortMethod sortMethod = new SortByDir();
 
-    private SortMethod sortMethod=new SortByDir();
+    protected ArrayList<FileData> doSort(List<FileData> src) {
 
-    protected  ArrayList<FileData> doSort(List<FileData> src){
-
-        if(sortMethod!=null){
+        if (sortMethod != null) {
             return sortMethod.doSort(src);
         }
 
@@ -140,18 +136,20 @@ public  class SortFileTask extends AbstractSortFileTask {
 
     @Override
     public void stop() {
-        isRun=false;
-        if(sortThread.getState()== Thread.State.WAITING){
-            synchronized (sortThread){
+        isRun = false;
+        if (sortThread.getState() == Thread.State.WAITING) {
+            synchronized (sortThread) {
                 sortThread.notify();
             }
 
         }
-        sortThread=null;
+        sortThread = null;
     }
 
     @Override
     public void sort(FileData parentFile) {
-        sort(parentFile,null);
+        sort(parentFile, null);
     }
+
+
 }

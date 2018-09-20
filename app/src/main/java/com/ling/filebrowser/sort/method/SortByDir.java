@@ -11,32 +11,31 @@ import java.util.List;
  * Created by Administrator on 2017/3/14.
  */
 
-public class SortByDir implements SortMethod{
+public class SortByDir implements SortMethod {
 
 
-    private Comparator<FileData> comparator= new Comparator<FileData>() {
+    private Comparator<FileData> comparator = new Comparator<FileData>() {
         @Override
         public int compare(FileData lhs, FileData rhs) {
-            if(lhs.getFileContent().isDirectory() && !rhs.getFileContent().isDirectory())
-            {
+            if (lhs.getFileContent().isDirectory() && !rhs.getFileContent().isDirectory()) {
                 return -1;
-            }else if (!lhs.getFileContent().isDirectory() && rhs.getFileContent().isDirectory()){
+            } else if (!lhs.getFileContent().isDirectory() && rhs.getFileContent().isDirectory()) {
 
                 return 1;
-            }else
-            {
+            } else {
                 return 0;
             }
         }
     };
+
     @Override
     public ArrayList<FileData> doSort(List<FileData> src) {
-        ArrayList<FileData> result=new ArrayList<>();
-        if (src==null)
+        ArrayList<FileData> result = new ArrayList<>();
+        if (src == null)
             return result;
 
-        SortByName sortByName=new SortByName();
-        result=sortByName.doSort(src);
+        SortByName sortByName = new SortByName();
+        result = sortByName.doSort(src);
 
         Collections.sort(result, comparator);
 

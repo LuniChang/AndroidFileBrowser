@@ -8,10 +8,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 
-
-import com.brt.log.AppLog;
 import com.ling.filebrowser.model.FileData;
+import com.ling.filebrowser.pre.model.PreviewerResult;
 import com.ling.filebrowser.util.Util;
+import com.xu.Log.AppLog;
 
 
 import java.io.File;
@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import com.ling.filebrowser.pre.model.PreviewerResult;
 
 public class FileBitmapPreviewer implements FilePreviewerInterface {
 

@@ -10,5 +10,5 @@ import java.util.List;
  */
 
 public interface SortMethod {
-     ArrayList<FileData> doSort(List<FileData> src);
+    ArrayList<FileData> doSort(List<FileData> src);
 }

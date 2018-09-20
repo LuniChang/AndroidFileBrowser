@@ -5,16 +5,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.LruCache;
 
-import static android.R.attr.key;
-import static android.R.attr.value;
-
 /**
  * Created by Administrator on 2017/3/9.
  */
 
 public class LruCacheConfig {
 
-//    private final static int cacheSize = 3 * 1024 * 1024; // 3MiB
+    //    private final static int cacheSize = 3 * 1024 * 1024; // 3MiB
     private static LruCache<String, Bitmap> instance = null;
 
     public static int getMemoryCacheSize(Context context) {

@@ -10,10 +10,11 @@
     <drawable name="green">#16a085</drawable>
     <drawable name="transparent">#00000000</drawable>
     <drawable name="translucent_darkgray">#88232323</drawable>
-    <color name="theme_color">#FF3caef4</color>
-    <color name="theme_color_half">#883caef4</color>
-    <color name="theme_color_dark">#ff1366c4</color>
+    <color name="theme_color">#FF00247c</color>
+    <color name="theme_color_dark">#ff00247c</color>
     <color name="theme_color_dark_half">#881366c4</color>
+    <color name="theme_color_half">#8800247c</color>
+
     <color name="theme_bg_color">#FFFEFEFE</color>
     <color name="theme_bg_color_half">#FF777777</color>
     
