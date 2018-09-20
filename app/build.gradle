@@ -1,0 +1,33 @@
+//apply plugin: 'com.android.library'
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion 23
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        applicationId "com.ling.filebrowser"
+        minSdkVersion 12
+        targetSdkVersion 17
+    }
+
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+dependencies {
+
+    compile(name: 'applog', ext: 'aar')
+    compile(name: 'backgroundTask', ext: 'aar')
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+
+}
